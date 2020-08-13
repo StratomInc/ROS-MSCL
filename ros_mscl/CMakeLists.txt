@@ -1,24 +1,27 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(ros_mscl)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roslint
-  message_generation
-  geometry_msgs
-  nav_msgs
-  roscpp
-  sensor_msgs
-  std_msgs
-  std_srvs
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
-  diagnostic_updater
-	mscl_msgs
-)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic -Wno-dev -fconcepts)
+endif()
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(diagnostic_updater REQUIRED)
+find_package(mscl_msgs REQUIRED)
 
 find_library(MSCL_LIB_PATH NAMES libmscl.so PATHS "/usr/share/c++-mscl" DOC "MSCL Library" NO_DEFAULT_PATH)
 find_library(BOOST_LIB_PATH NAMES libboost_chrono.so PATHS "/usr/share/c++-mscl/Boost/lib" NO_DEFAULT_PATH)
@@ -27,113 +30,105 @@ set(BOOST_INC_PATH "/usr/share/c++-mscl/Boost/include")
 #find_path(MSCL_INC_PATH NAMES mscl.h PATHS "/usr/share/c++-mscl/source/mscl" DOC "MSCL Includes" NO_DEFAULT_PATH)
 
 set(MSCL_LIB "usr/share/c++-mscl")
-add_definitions(-std=c++11)
 
-set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
+#set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
 
-FILE(GLOB SRV_FILES RELATIVE "${${PROJECT_NAME}_SOURCE_DIR}/srv"
+FILE(GLOB SRV_FILES RELATIVE "${${PROJECT_NAME}_SOURCE_DIR}"
     "${${PROJECT_NAME}_SOURCE_DIR}/srv/*.srv")
 
-add_service_files(
-  FILES
+rosidl_generate_interfaces(${PROJECT_NAME}
   ${SRV_FILES}
-)
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-
-generate_messages(
   DEPENDENCIES
   std_msgs
+  std_srvs
+  nav_msgs
   geometry_msgs
 )
 
-catkin_package(
-  INCLUDE_DIRS
-    include
-  CATKIN_DEPENDS
-    roscpp
-    cmake_modules
-    tf2
-    tf2_ros
-    tf2_geometry_msgs
-    std_msgs
-    std_srvs
-    geometry_msgs
-    sensor_msgs
-    nav_msgs
-    message_runtime
-		mscl_msgs
-)
-###########
-## Build ##
-###########
+include_directories(include/${PROJECT_NAME} ${MIPLIBINC} ${MIPUTILINC} ${MSCL_INC_PATH} ${MSCL_LIB} ${MSCL_INC} )
 
-include_directories(include/${PROJECT_NAME} ${MIPLIBINC} ${MIPUTILINC} ${MSCL_INC_PATH} ${MSCL_LIB} ${MSCL_INC} ${catkin_INCLUDE_DIRS})
-
-add_library(ros_mscl
+add_library(microstrain_3dm SHARED
   src/microstrain_3dm.cpp
 )
-add_dependencies(${PROJECT_NAME}
-  mscl_msgs_generate_messages_cpp
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+
+target_link_libraries(microstrain_3dm   ${MSCL_LIB_PATH})
+
+ament_target_dependencies(microstrain_3dm
+  rclcpp
+  mscl_msgs
+  tf2_geometry_msgs
+  sensor_msgs  
 )
 
-add_library(microstrain_diagnostic_updater src/microstrain_diagnostic_updater.cpp)
-add_dependencies(microstrain_diagnostic_updater
-  mscl_msgs_generate_messages_cpp
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+target_include_directories(microstrain_3dm
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
-# Executables
+rosidl_target_interfaces(microstrain_3dm
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
-add_executable(ros_mscl_node
-  src/microstrain_3dm_node.cpp
+add_library(microstrain_diagnostic_updater SHARED
   src/microstrain_diagnostic_updater.cpp
 )
-
-add_dependencies(ros_mscl_node
-  ros_mscl_gencpp
-  mscl_msgs_generate_messages_cpp
-  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+ament_target_dependencies(microstrain_diagnostic_updater
+  rclcpp
+  mscl_msgs
+  diagnostic_updater
 )
 
-# Linking
+#target_include_directories(microstrain_diagnostic_updater
+#  PUBLIC
+#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#    $<INSTALL_INTERFACE:include>
+#)
 
-target_link_libraries(ros_mscl
-  ${MSCL_LIB_PATH}
-  ${catkin_LIBRARIES}
+rosidl_target_interfaces(microstrain_diagnostic_updater
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+add_executable(microstrain_3dm_node src/microstrain_3dm_node.cpp)
+
+rosidl_target_interfaces(microstrain_3dm_node
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+target_link_libraries(microstrain_3dm_node microstrain_3dm microstrain_diagnostic_updater)
+
+ament_target_dependencies(microstrain_3dm_node rclcpp mscl_msgs)
+
+
+
+#target_include_directories(microstrain_3dm_node
+#  PUBLIC
+#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#    $<INSTALL_INTERFACE:include>
+#)
+
+install(TARGETS microstrain_3dm microstrain_diagnostic_updater
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
 )
-target_link_libraries(ros_mscl_node
-  ros_mscl
-  ${catkin_LIBRARIES}
-)
 
-#############
-## Install ##
-#############
+install( TARGETS microstrain_3dm_node
+  DESTINATION lib/${PROJECT_NAME})
 
-install(TARGETS ros_mscl ros_mscl_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+install(DIRECTORY include
+  DESTINATION include
 )
 
 install(DIRECTORY launch config
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DESTINATION share/${PROJECT_NAME}
 )
 
-#############
-## Testing ##
-#############
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
 
-## Run roslint on only the node files for now
-# TODO: Add more files as needed
-roslint_cpp(src/microstrain_3dm.cpp src/microstrain_3dm_node.cpp)
+
+ament_export_libraries(${PROJECT_NAME}_3dm microstrain_diagnostic_updater)
+ament_export_include_directories(include)
+ament_export_dependencies(ament_cmake rosidl_default_runtime)
+
+ament_package()
+
