@@ -54,6 +54,7 @@ add_service_files(
   SetDynamicsMode.srv
   SetZeroAngleUpdateThreshold.srv
   SetZeroVelocityUpdateThreshold.srv
+  SetFilterEuler.srv
   SetTareOrientation.srv
   SetAccelNoise.srv
   SetGyroNoise.srv
@@ -188,6 +189,8 @@ add_executable(get_zero_angle_update_threshold_client src/get_zero_angle_update_
 
 add_executable(set_zero_velocity_update_threshold_client src/set_zero_velocity_update_threshold_client.cpp)
 
+add_executable(set_filter_euler_client src/set_filter_euler_client.cpp)
+
 add_executable(get_zero_velocity_update_threshold_client src/get_zero_velocity_update_threshold_client.cpp)
 
 add_executable(set_tare_orientation_client src/set_tare_orientation_client.cpp)
@@ -293,6 +296,8 @@ add_dependencies(get_zero_angle_update_threshold_client ros_mscl_gencpp)
 add_dependencies(set_zero_velocity_update_threshold_client ros_mscl_gencpp)
 
 add_dependencies(get_zero_velocity_update_threshold_client ros_mscl_gencpp)
+
+add_dependencies(set_filter_euler_client ros_mscl_gencpp)
 
 add_dependencies(set_tare_orientation_client ros_mscl_gencpp)
 
@@ -415,6 +420,8 @@ target_link_libraries(get_zero_angle_update_threshold_client ${catkin_LIBRARIES}
 target_link_libraries(set_zero_velocity_update_threshold_client ${catkin_LIBRARIES})
 
 target_link_libraries(get_zero_velocity_update_threshold_client ${catkin_LIBRARIES})
+
+target_link_libraries(set_filter_euler_client ${catkin_LIBRARIES})
 
 target_link_libraries(set_tare_orientation_client ${catkin_LIBRARIES})
 
