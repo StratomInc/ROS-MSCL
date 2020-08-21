@@ -3061,7 +3061,7 @@ void Microstrain::parseEstFilterPacket(const mscl::MipDataPacket &packet)
       if(point.qualifier() == mscl::MipTypes::CH_NORTH)
       {
         curr_filter_pos_uncert_north = point.as_float();
-        nav_msg_.pose.covariance[0]  = pow(curr_filter_pos_uncert_north, 2);
+        nav_msg_.pose.covariance[0]  = (float64_t) pow(curr_filter_pos_uncert_north, 2);
       }
       else if(point.qualifier() == mscl::MipTypes::CH_EAST)
       {
@@ -3190,7 +3190,7 @@ void Microstrain::parseGnssPacket(const mscl::MipDataPacket &packet)
       else if(point.qualifier() == mscl::MipTypes::CH_HORIZONTAL_ACCURACY)
       {
         //Horizontal covariance maps to lat and lon
-        gps_msg_.position_covariance[0] = pow(point.as_float(), 2);
+        gps_msg_.position_covariance[0] = (float64_t) pow(point.as_float(), 2);
         gps_msg_.position_covariance[4] = gps_msg_.position_covariance[0];
       }
       else if(point.qualifier() == mscl::MipTypes::CH_VERTICAL_ACCURACY)
