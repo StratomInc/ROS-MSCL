@@ -3293,9 +3293,8 @@ void Microstrain::parseGnssPacket(const mscl::MipDataPacket &packet)
       else if(point.qualifier() == mscl::MipTypes::CH_HORIZONTAL_ACCURACY)
       {
         //Horizontal covariance maps to lat and lon
-        gps_msg_.position_covariance[0] = pow(point.as_float(), 2);
+        gps_msg_.position_covariance[0] = pow(point.as_double(), 2);
         gps_msg_.position_covariance[4] = gps_msg_.position_covariance[0];
-        gps_msg_.position_covariance[0] = 1.0;
       }
       else if(point.qualifier() == mscl::MipTypes::CH_VERTICAL_ACCURACY)
       {
