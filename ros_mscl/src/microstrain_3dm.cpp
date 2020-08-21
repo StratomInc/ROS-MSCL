@@ -2631,15 +2631,15 @@ void Microstrain::parseGnssPacket(const mscl::MipDataPacket &packet)
         gps_msg_.altitude = point.as_double();
         gps_odom_msg_.pose.pose.position.z = point.as_double();
       }
-      else if (point.qualifier() == mscl::MipTypes::CH_HEIGHT_ABOVE_MSL)
-      {
-        gps_msg_.position_covariance[0] = point.as_double();
-        gps_msg_.position_covariance[0] *= gps_msg_.position_covariance[0];
-      }
+      // else if (point.qualifier() == mscl::MipTypes::CH_HEIGHT_ABOVE_MSL)
+      // {
+
+      // }
       else if (point.qualifier() == mscl::MipTypes::CH_HORIZONTAL_ACCURACY)
       {
-        gps_msg_.position_covariance[4] = point.as_float();
-        gps_msg_.position_covariance[4] *= gps_msg_.position_covariance[4];
+        gps_msg_.position_covariance[0] = point.as_float();
+        gps_msg_.position_covariance[0] *= gps_msg_.position_covariance[0];
+        gps_msg_.position_covariance[4] = gps_msg_.position_covariance[0];
       }
       else if (point.qualifier() == mscl::MipTypes::CH_VERTICAL_ACCURACY)
       {
