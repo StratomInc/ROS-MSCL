@@ -3164,7 +3164,7 @@ void Microstrain::parseEstFilterPacket(const mscl::MipDataPacket &packet)
       if(point.qualifier() == mscl::MipTypes::CH_NORTH)
       {
         curr_filter_pos_uncert_north = point.as_float();
-        nav_msg_.pose.covariance[0]  = (float64_t) pow(curr_filter_pos_uncert_north, 2);
+        nav_msg_.pose.covariance[0]  = (double_t) pow(curr_filter_pos_uncert_north, 2);
       }
       else if(point.qualifier() == mscl::MipTypes::CH_EAST)
       {
