@@ -1,27 +1,23 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
+project(mscl_msgs)
 
-get_filename_component(PACKAGE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-message("Creating Package: ${PACKAGE_NAME}")
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(std_msgs REQUIRED)
 
-project(${PACKAGE_NAME})  ## this package name is the name of the directory this cmake file is in
-
-find_package(catkin REQUIRED COMPONENTS message_generation std_msgs)
-
-
-FILE(GLOB rosMsgFiles RELATIVE "${${PROJECT_NAME}_SOURCE_DIR}/msg"
+FILE(GLOB rosMsgFiles RELATIVE "${${PROJECT_NAME}_SOURCE_DIR}"
     "${${PROJECT_NAME}_SOURCE_DIR}/msg/*.msg")
 
-FOREACH(rosMsg ${rosMsgFiles})
-    MESSAGE( STATUS "Processing message file: ${rosMsg}" )
-    add_message_files( FILES ${rosMsg})
-ENDFOREACH(rosMsg)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${rosMsgFiles}
+  DEPENDENCIES std_msgs
+)
 
-add_message_files(
-  DIRECTORY msg
-  FILES
-  ${rosMsg}
-  )
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
 
-generate_messages(DEPENDENCIES std_msgs)
+ament_package()
 
-catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
+
