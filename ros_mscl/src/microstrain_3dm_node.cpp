@@ -15,29 +15,29 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  auto us = std::make_shared<Microstrain::Microstrain>();
+  std::shared_ptr<Microstrain::Microstrain> microstrain = std::make_shared<Microstrain::Microstrain>();
 
-  us->setup();
+  microstrain->setup();
 
   //Diagnostics updater for status
-  us->declare_parameter("diagnostics", true);
+  microstrain->declare_parameter("diagnostics", true);
 
-  if( us->get_parameter("diagnostics").as_bool())
+  if( microstrain->get_parameter("diagnostics").as_bool())
   {
-      ros_mscl::RosDiagnosticUpdater ros_diagnostic_updater(us);
+      ros_mscl::RosDiagnosticUpdater ros_diagnostic_updater(microstrain);
   }
 
-  rclcpp::Rate r(us->m_spin_rate);
+  rclcpp::Rate r(microstrain->m_spin_rate);
 
   while(rclcpp::ok())
   {
-      us->process();
-      rclcpp::spin_some(us);
+      microstrain->process();
+      rclcpp::spin_some(microstrain);
 
       r.sleep();
   }
 
-  us->cleanup();
+  microstrain->cleanup();
 
   rclcpp::shutdown();
   return 0;
