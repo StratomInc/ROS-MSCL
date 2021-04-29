@@ -78,6 +78,10 @@ ament_target_dependencies(microstrain_diagnostic_updater
   mscl_msgs
   diagnostic_updater
 )
+add_executable(set_filter_euler_client src/set_filter_euler_client.cpp)
+
+add_dependencies(set_filter_euler_client ros_mscl_gencpp)
+
 
 rosidl_target_interfaces(microstrain_diagnostic_updater
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
