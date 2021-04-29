@@ -2,6 +2,36 @@
 Changelog for package ros_mscl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.3 (2021-04-05)
+------------------
+* Added a flag to report values with-respect-to the ENU frame instead of the device-native NED frame.  This affects all reported position, velocity, and attitude values.
+* Removed user-settable frame ids so that the code can correctly determine if they should include "NED" or "ENU" frame designators
+* Moved sensor2vehicle transformation code outside of publish_filter check as it applies to IMU data even if not publishing filter data
+
+
+1.1.2 (2021-02-24)
+------------------
+* BREAKING CHANGE: Switched order of latitude and longitude in /nav/odom message to be correct (now Latitude, Longitude, Height)
+* Added support for external heading messages
+* Added support for relative position ouput on /device_name/nav/relative_pos/odom (GQ7 only)
+* Removed service clients as feedback has been that they are not used and clutter driver code
+* Fixed crash issue identified in https://github.com/LORD-MicroStrain/ROS-MSCL/issues/35
+
+1.1.1 (2020-12-08)
+------------------
+* Added support for raw binary file output (used for support issues)
+* Added support for RTK status message received on data class GNSS3 (GQ7 only)
+* Added factory streaming setup for devices that support this command (GQ7 currently)
+
+1.1.0 (2020-09-14)
+------------------
+* Added preliminary support for GQ7
+* Changed "GPS" topic to "GNSS1" and added "GNSS2" topic in support of GQ7
+* Refactored driver code for more explicit variable names
+* Changed initialization procedure to setup device first, then topics, then services
+* Modified example launch file with more specific parameter names
+
+
 1.0.0 (2020-02-13)
 ------------------
 * Added mscl support
