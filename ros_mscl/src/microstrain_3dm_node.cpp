@@ -37,6 +37,8 @@ int main(int argc, char **argv)
       r.sleep();
   }
 
+  us->cleanup();
+
   rclcpp::shutdown();
   return 0;
 }

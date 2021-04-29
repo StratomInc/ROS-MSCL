@@ -40,7 +40,6 @@ void RosDiagnosticUpdater::generalDiagnostics(diagnostic_updater::DiagnosticStat
   {
     stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Status ok");
   }
-  
 }
 
 void RosDiagnosticUpdater::packetDiagnostics(diagnostic_updater::DiagnosticStatusWrapper &stat)
@@ -96,7 +95,6 @@ void RosDiagnosticUpdater::imuDiagnostics(diagnostic_updater::DiagnosticStatusWr
 void RosDiagnosticUpdater::statusCallback(const mscl_msgs::msg::Status::SharedPtr status)
 {
   last_status_ = *status;
-  //update();
 }
 
 
