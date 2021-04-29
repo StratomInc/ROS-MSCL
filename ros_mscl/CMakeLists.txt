@@ -9,6 +9,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wno-dev -fconcepts)
 endif()
 
+set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
+
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
@@ -31,7 +33,6 @@ set(BOOST_INC_PATH "/usr/share/c++-mscl/Boost/include")
 
 set(MSCL_LIB "usr/share/c++-mscl")
 
-#set(CMAKE_C_FLAGS "-Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-format -fno-builtin-memcpy")
 
 FILE(GLOB SRV_FILES RELATIVE "${${PROJECT_NAME}_SOURCE_DIR}"
     "${${PROJECT_NAME}_SOURCE_DIR}/srv/*.srv")
@@ -78,12 +79,6 @@ ament_target_dependencies(microstrain_diagnostic_updater
   diagnostic_updater
 )
 
-#target_include_directories(microstrain_diagnostic_updater
-#  PUBLIC
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#    $<INSTALL_INTERFACE:include>
-#)
-
 rosidl_target_interfaces(microstrain_diagnostic_updater
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
@@ -95,14 +90,6 @@ rosidl_target_interfaces(microstrain_3dm_node
 target_link_libraries(microstrain_3dm_node microstrain_3dm microstrain_diagnostic_updater)
 
 ament_target_dependencies(microstrain_3dm_node rclcpp mscl_msgs)
-
-
-
-#target_include_directories(microstrain_3dm_node
-#  PUBLIC
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#    $<INSTALL_INTERFACE:include>
-#)
 
 install(TARGETS microstrain_3dm microstrain_diagnostic_updater
   LIBRARY DESTINATION lib
@@ -131,4 +118,3 @@ ament_export_include_directories(include)
 ament_export_dependencies(ament_cmake rosidl_default_runtime)
 
 ament_package()
-
