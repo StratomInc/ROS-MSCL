@@ -6,15 +6,39 @@ This code is licensed under MIT license (see LICENSE file for details)
 
 */
 
-
 #include "microstrain_3dm.h"
-#include <ros/ros.h>
+#include "microstrain_diagnostic_updater.h"
+
+#include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "ros_mscl_node");
-  Microstrain::Microstrain ustrain;
-  ustrain.run();
-  ros::shutdown();
+  rclcpp::init(argc, argv);
+
+  std::shared_ptr<Microstrain::Microstrain> microstrain = std::make_shared<Microstrain::Microstrain>();
+
+  microstrain->setup();
+
+  //Diagnostics updater for status
+  microstrain->declare_parameter("diagnostics", true);
+
+  if( microstrain->get_parameter("diagnostics").as_bool())
+  {
+      ros_mscl::RosDiagnosticUpdater ros_diagnostic_updater(microstrain);
+  }
+
+  rclcpp::Rate r(microstrain->m_spin_rate);
+
+  while(rclcpp::ok())
+  {
+      microstrain->process();
+      rclcpp::spin_some(microstrain);
+
+      r.sleep();
+  }
+
+  microstrain->cleanup();
+
+  rclcpp::shutdown();
   return 0;
 }
