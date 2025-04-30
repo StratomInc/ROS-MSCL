@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<robot name="apl" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Cart origin frames -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.4 0.2 1.0" />
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="imu_link">
+    <visual>
+      <geometry>
+        <box size="0.1 0.06 0.015" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="imu_link" />
+    <origin xyz="0.0 0.0 0.5075" rpy="0.0 0.0 3.14159"/>
+  </joint>
+
+  <link name="gq7_gnss_1_antenna_link">
+    <visual>
+      <geometry>
+        <box size="0.04 0.05 0.02" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="gq7_gnss_1_antenna_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="gq7_gnss_1_antenna_link" />
+    <origin xyz="0.0 -0.63 0.501"/>
+  </joint>
+
+  <link name="gq7_gnss_2_antenna_link">
+    <visual>
+      <geometry>
+        <box size="0.04 0.05 0.02" />
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="gq7_gnss_2_antenna_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="gq7_gnss_2_antenna_link" />
+    <origin xyz="0.0 0.60 0.501" />
+  </joint>
+
+</robot>
